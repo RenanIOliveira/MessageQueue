@@ -8,13 +8,13 @@ namespace MessageQueueServer
     /// </summary>
     internal class ClientProcess
     {
-        public IPAddress ipAdress { get; private set; }
+        public IPEndPoint ConnectionEndPoint { get; private set; }
 
         public Guid Id { get; private set; }
 
-        public ClientProcess(IPAddress ipAdress)
+        public ClientProcess(IPEndPoint ipEndPoint)
         {
-            this.ipAdress = ipAdress;
+            this.ConnectionEndPoint = ipEndPoint;
             Id = Guid.NewGuid();
         }
     }

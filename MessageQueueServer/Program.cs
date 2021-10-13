@@ -8,7 +8,9 @@ namespace MessageQueueServer // Note: actual namespace depends on the project na
     {
         public static void Main(string[] args)
         {
-           
+            var server = new TcpServer(13000);
+
+            server.Start();
         }
     }
 }

@@ -7,16 +7,19 @@
     {
         public Guid MessageId { get; private set; }
 
-        public string Sender  { get; private set; }
+        /// <summary>
+        /// Client Process that sent the message
+        /// </summary>
+        public Guid Sender  { get; private set; }
 
-        public byte[] Payload {  get; private set; }
+        public string Content {  get; private set; }
 
 
-        public Message(string sender, byte[] payload)
+        public Message(Guid sender, string content)
         {
             this.MessageId = Guid.NewGuid();
             this.Sender = sender;
-            this.Payload = payload;
+            this.Content = content;
         }
     }
 }
