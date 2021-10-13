@@ -80,7 +80,7 @@ namespace MessageQueueServer.ClientConnector
                using var writer = new StreamWriter(networkStream, Encoding.UTF8);
                using var reader = new StreamReader(networkStream, Encoding.UTF8);
 
-                await writer.WriteAsync(msg.Content);
+                await writer.WriteLineAsync(msg.Content);
 
                 string? response = reader.ReadToEnd();
 
