@@ -20,7 +20,7 @@ namespace MessageQueueServer.Server
             "Register"
         };
 
-        App()
+        public App()
         {
             this.manager = new QueueManager();
         }
@@ -49,7 +49,7 @@ namespace MessageQueueServer.Server
                     }
                 case "Register":
                     {
-                        return this.manager.RegisterClient(message.Args[0], Int32.Parse(message.Args[1])).ToString();
+                        return this.manager.RegisterClient(message.SenderId, message.Args[0], Int32.Parse(message.Args[1])).ToString();
                     }
                 default:
                     {

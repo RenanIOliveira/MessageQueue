@@ -16,15 +16,24 @@ namespace MessageQueueClientLib
             Ephemeral,
         }
 
-        //accept one or more messageQueue server address it prioritizes the first of the list
-        public MQClient(Action<string> handler, string  server, int serverPort = 13000)
+        
+        public MQClient(Action<string> handler, string  server, int serverPort = 13001)
         {
             this.Server = new ServerModel(server, serverPort);
             this.Connector = new TCPServerConnector(Server);
 
             this.Listener = new TcpServer("127.0.0.1", 13000, handler);
 
-            Register();
+            var registeredId = Register();
+
+            if (registeredId == null)
+            {
+                throw new Exception($"Error: It was not possible to register in Message Queue Server");
+            }
+            else
+            {
+                this.ClientId = Guid.Parse(registeredId);
+            }
 
         }
 
@@ -91,7 +100,7 @@ namespace MessageQueueClientLib
             args.Add(this.Listener.endPoint.Port.ToString());
 
 
-            NetworkMessage msg = new NetworkMessage("CreateQueue", ClientId, args);
+            NetworkMessage msg = new NetworkMessage("Register", ClientId, args);
 
             Task<(bool, string)> taskResult = Connector.SendMessage(msg);
 

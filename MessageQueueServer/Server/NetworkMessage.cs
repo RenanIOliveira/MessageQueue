@@ -39,7 +39,7 @@ namespace MessageQueueServer.Server
             var command = splitted[0];
             var sender = Guid.Parse(splitted[1]);
 
-            if(splitted.Length == 1)
+            if(splitted.Length == 2)
             {
                 return new NetworkMessage(command,sender, new List<string>());
             }
@@ -47,7 +47,7 @@ namespace MessageQueueServer.Server
             {
                 List<string> args = new List<string>();
                  
-                for(int i = 1; i< splitted.Length; i++)
+                for(int i = 2; i< splitted.Length; i++)
                 {
                     args.Add(splitted[i]);
                 }
@@ -58,7 +58,7 @@ namespace MessageQueueServer.Server
 
         public string AsString()
         {
-            string result = $"{this.Command}::";
+            string result = $"{this.Command}::{this.SenderId}::";
             
             if (Args.Count == 0)
             {

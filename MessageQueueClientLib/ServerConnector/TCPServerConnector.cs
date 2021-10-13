@@ -6,7 +6,7 @@ namespace MessageQueueClientLib.ServerConnector
     internal class TCPServerConnector : IServerConnector
     {
 
-        private int ReadTimeout = 2000;
+        private int ReadTimeout = 200000;
 
         public ServerModel server { get ; init ; }
         private TcpClient tcpSocket {  get; set; }
@@ -34,11 +34,14 @@ namespace MessageQueueClientLib.ServerConnector
 
                 networkStream.ReadTimeout = this.ReadTimeout;
 
-               //using var writer = new StreamWriter(networkStream);
+               using var writer = new StreamWriter(networkStream, Encoding.UTF8);
                using var reader = new StreamReader(networkStream, Encoding.UTF8);
 
-                byte[] bytes = Encoding.UTF8.GetBytes(msg.AsString());
-                await networkStream.WriteAsync(bytes, 0, bytes.Length);
+               writer.AutoFlush = true;
+
+
+                await writer.WriteLineAsync(msg.AsString());
+                writer.Flush();
 
                 string? response = reader.ReadToEnd();
                 if(response != null && response.Count() >= 2 && response.Substring(0, 2) == "OK" )

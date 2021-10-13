@@ -58,7 +58,7 @@ namespace MessageQueueClientLib
 
         public string AsString()
         {
-            string result = $"{this.Command}::";
+            string result = $"{this.Command}::{this.SenderId}::";
             
             if (Args.Count == 0)
             {

@@ -25,7 +25,11 @@ namespace MessageQueueServer
             IPAddress localAddr = IPAddress.Parse("127.0.0.1");
             this.tcpListener = new TcpListener(localAddr,port);
 
+            tcpListener.Start();
+
             this.handler = new App();
+
+            Console.WriteLine("Servidor Iniciado Com Sucesso");
         }
 
         public void Start()
@@ -43,30 +47,35 @@ namespace MessageQueueServer
 
                 NetworkStream stream = client.GetStream();
 
-                int i;
 
-                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                {
-                    data += System.Text.Encoding.UTF8.GetString(bytes, 0, i);
-                }
+                using var reader = new StreamReader(stream, Encoding.UTF8);
 
+                //int i;
+                //while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+                //{
+                //    data += System.Text.Encoding.UTF8.GetString(bytes, 0, i);
+                //}
+
+                
+
+                string? response = reader.ReadLine();
+                if (response != null) data = response;
 
                 byte[] answer;
                 try
                 {
+                    Console.WriteLine($"Message Received: {data}");
                     var result = handler.HandleRequest(data);
                     answer = Encoding.UTF8.GetBytes($"OK::{result}");
                 }
                 catch (Exception ex)
                 {
-                    answer = Encoding.UTF8.GetBytes($"ERROR::");
+                    answer = Encoding.UTF8.GetBytes($"ERROR::{ex.Message}");
                 }
 
 
                 stream.Write(answer, 0, answer.Length);
-
-
-                tcpListener.Start();
+                client.Close();
             }
         }
 

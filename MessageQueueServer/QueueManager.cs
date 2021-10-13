@@ -118,9 +118,19 @@ namespace MessageQueueServer
         /// </summary>
         /// <param name="ipAddress"></param>
         /// <param name="port"></param>
-        public Guid RegisterClient(string ip, int port)
+        public Guid RegisterClient(Guid clientId, string ip, int port)
         {
-            var clientDescriptor = new ClientProcess(new IPEndPoint(IPAddress.Parse(ip), port));
+            ClientProcess clientDescriptor;
+            
+            if (clientId == Guid.Empty)
+                clientDescriptor = new ClientProcess(new IPEndPoint(IPAddress.Parse(ip), port));
+            else
+                clientDescriptor = new ClientProcess(new IPEndPoint(IPAddress.Parse(ip), port), clientId);
+
+            
+            if (Clients.ContainsKey(clientDescriptor.Id))
+                this.Clients.Remove(clientDescriptor.Id);
+            
 
             this.Clients.Add(clientDescriptor.Id, clientDescriptor);
 

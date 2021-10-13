@@ -77,11 +77,10 @@ namespace MessageQueueServer.ClientConnector
 
                 networkStream.ReadTimeout = this.ReadTimeout;
 
-               //using var writer = new StreamWriter(networkStream);
+               using var writer = new StreamWriter(networkStream, Encoding.UTF8);
                using var reader = new StreamReader(networkStream, Encoding.UTF8);
 
-                byte[] bytes = msg.Content;
-                await networkStream.WriteAsync(bytes, 0, bytes.Length);
+                await writer.WriteAsync(msg.Content);
 
                 string? response = reader.ReadToEnd();
 

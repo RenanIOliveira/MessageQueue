@@ -1,4 +1,4 @@
-﻿using MessageQueueServer.Server;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace MessageQueueClientLib
     {
         int Port;
 
-        public IPEndPoint endPoint { get; set; };
+        public IPEndPoint endPoint { get; set; }
 
         TcpListener tcpListener;
 
@@ -64,7 +64,7 @@ namespace MessageQueueClientLib
                 }
                 catch (Exception ex)
                 {
-                    answer = Encoding.UTF8.GetBytes($"ERROR::");
+                    answer = Encoding.UTF8.GetBytes($"ERROR::{ex.Message}");
                 }
 
 
