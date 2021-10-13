@@ -14,7 +14,7 @@ namespace MessageQueueServer.Server
         QueueManager manager;
 
         string[] commands = new string[] { 
-            "SendMessage", 
+            "Publish", 
             "CreateQueue", 
             "Subscribe",
             "Register"
@@ -36,7 +36,7 @@ namespace MessageQueueServer.Server
                         this.manager.CreateQueue(message.Args[0],(QueueTypes) Enum.Parse(typeof(QueueTypes),message.Args[1]));
                         break;
                     }
-                case "SendMessage":
+                case "Publish":
                     {
                         CreateMessageAndSendToManager(message);
                         break;
