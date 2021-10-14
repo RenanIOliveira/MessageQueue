@@ -53,14 +53,6 @@ namespace MessageQueueClientLib
                 string? response = reader.ReadLine();
                 if (response != null) data = response;
 
-                //int i;
-
-                //while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                //{
-                //    data += System.Text.Encoding.UTF8.GetString(bytes, 0, i);
-                //}
-
-
                 byte[] answer;
                 try
                 {

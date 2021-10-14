@@ -9,27 +9,29 @@ namespace MessageQueueClientLib.ServerConnector
         private int ReadTimeout = 200000;
 
         public ServerModel server { get ; init ; }
-        private TcpClient tcpSocket {  get; set; }
+       // private TcpClient tcpSocket {  get; set; }
 
         public TCPServerConnector(ServerModel server)
         {
             this.server = server;
-            this.tcpSocket = new TcpClient();
+           // this.tcpSocket = new TcpClient();
+           
+
         }
 
         public void Dispose()
         {
-            if(tcpSocket != null) tcpSocket.Dispose();
+            //if (tcpSocket != null) tcpSocket.Dispose();
         }
 
-      
+
         public async Task<(bool,string)> SendMessage(NetworkMessage msg)
         {
+            var tcpSocket = new TcpClient();
+            tcpSocket.Connect(this.server.endPoint);
 
             try
             {
-               tcpSocket.Connect(this.server.endPoint);
-
                 using NetworkStream networkStream = tcpSocket.GetStream();
 
                 networkStream.ReadTimeout = this.ReadTimeout;
@@ -43,7 +45,7 @@ namespace MessageQueueClientLib.ServerConnector
                 await writer.WriteLineAsync(msg.AsString());
                 writer.Flush();
 
-                string? response = reader.ReadToEnd();
+                string? response = reader.ReadLine();
                 if(response != null && response.Count() >= 2 && response.Substring(0, 2) == "OK" )
                 {
                     var result = response.Split("::")[1];

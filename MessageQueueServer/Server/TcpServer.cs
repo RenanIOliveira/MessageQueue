@@ -49,33 +49,26 @@ namespace MessageQueueServer
 
 
                 using var reader = new StreamReader(stream, Encoding.UTF8);
-
-                //int i;
-                //while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                //{
-                //    data += System.Text.Encoding.UTF8.GetString(bytes, 0, i);
-                //}
-
+                using var writer = new StreamWriter(stream, Encoding.UTF8);
+               
                 
 
                 string? response = reader.ReadLine();
                 if (response != null) data = response;
 
-                byte[] answer;
+                string answer;
                 try
                 {
                     Console.WriteLine($"Message Received: {data}");
                     var result = handler.HandleRequest(data);
-                    answer = Encoding.UTF8.GetBytes($"OK::{result}");
+                    answer = $"OK::{result}";
                 }
                 catch (Exception ex)
                 {
-                    answer = Encoding.UTF8.GetBytes($"ERROR::{ex.Message}");
+                    answer = $"ERROR::{ex.Message}";
                 }
 
-
-                stream.Write(answer, 0, answer.Length);
-                client.Close();
+                writer.WriteLine(answer);
             }
         }
 

@@ -17,7 +17,7 @@ namespace MessageQueueClientLib
         }
 
         
-        public MQClient(Action<string> handler, string  server, int serverPort = 13001)
+        public MQClient(Action<string> handler, string  server, int serverPort = 13000)
         {
             this.Server = new ServerModel(server, serverPort);
             this.Connector = new TCPServerConnector(Server);
