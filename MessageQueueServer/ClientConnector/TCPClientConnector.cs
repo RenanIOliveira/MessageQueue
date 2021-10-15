@@ -13,17 +13,14 @@ namespace MessageQueueServer.ClientConnector
         private int ReadTimeout = 2000;
 
         public ClientProcess ClientDescriptor { get ; init ; }
-        private TcpClient tcpSocket {  get; set; }
 
         public TCPClientConnector(ClientProcess client)
         {
             this.ClientDescriptor = client;
-            this.tcpSocket = new TcpClient();
         }
 
         public void Dispose()
         {
-            if(tcpSocket != null) tcpSocket.Dispose();
         }
 
         /// <summary>
@@ -32,8 +29,10 @@ namespace MessageQueueServer.ClientConnector
         /// <returns></returns>
         public async Task<bool> IsAlive()
         {
+            var tcpSocket = new TcpClient();
             try
             {
+
                 tcpSocket.Connect(this.ClientDescriptor.ConnectionEndPoint);
 
                 using NetworkStream networkStream = tcpSocket.GetStream();
@@ -68,7 +67,7 @@ namespace MessageQueueServer.ClientConnector
 
         public async Task<bool> SendMessage(Message msg)
         {
-
+            var tcpSocket = new TcpClient();
             try
             {
                tcpSocket.Connect(this.ClientDescriptor.ConnectionEndPoint);

@@ -8,7 +8,8 @@ namespace MessageQueueServer
 {
     internal class PersistentTopicQueue :BaseQueue
     {
-       
+        private Mutex mutex = new Mutex();
+
         public PersistentTopicQueue(string queueIdentifier) : base(queueIdentifier)
         {
         }
@@ -21,6 +22,8 @@ namespace MessageQueueServer
         /// <param name="process"></param>
         public override void messageSent(Guid messageId, Guid process)
         {
+            mutex.WaitOne();
+
             var pendentReceiversForMessage = this.PendentReceivers[messageId];
 
             if(pendentReceiversForMessage != null)
@@ -33,6 +36,8 @@ namespace MessageQueueServer
                 }
 
             }
+
+            mutex.ReleaseMutex();
            
         }
 
@@ -44,14 +49,17 @@ namespace MessageQueueServer
         /// <returns></returns>
         public override Message? getNextMessage(ClientProcess process)
         {
+            mutex.WaitOne();
             foreach(Message msg in this.Content)
             {
                 if (PendentReceivers[msg.MessageId].Contains(process.Id))
                 {
+                    mutex.ReleaseMutex();
                     return msg;
                 }
             }
 
+            mutex.ReleaseMutex();
             return null;
         }
 

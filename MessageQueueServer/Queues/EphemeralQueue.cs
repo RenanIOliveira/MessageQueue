@@ -8,6 +8,9 @@ namespace MessageQueueServer
 {
     internal class EphemeralQueue : BaseQueue
     {
+        private Mutex mutex = new Mutex();
+
+
         public EphemeralQueue(string queueIdentifier) : base(queueIdentifier)
         {
 
@@ -15,6 +18,9 @@ namespace MessageQueueServer
 
         public override Message? getNextMessage(ClientProcess process)
         {
+
+            mutex.WaitOne();
+
             foreach (Message msg in this.Content)
             {
                 var pendentReceiversForMessage = PendentReceivers[msg.MessageId];
@@ -27,11 +33,11 @@ namespace MessageQueueServer
                     {
                         this.Content = this.Content.Where(m => m.MessageId != msg.MessageId).ToList();
                     }
-
+                    mutex.ReleaseMutex();
                     return msg;
                 }
             }
-
+            mutex.ReleaseMutex();
             return null;
         }
 
