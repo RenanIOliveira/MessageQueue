@@ -21,7 +21,7 @@ namespace MessageQueueServer
         public TcpServer(int port)
         {
             this.Port = port;
-
+            Console.WriteLine($"Iniciando Servidor...");
             IPAddress localAddr = IPAddress.Parse("127.0.0.1");
             this.tcpListener = new TcpListener(localAddr,port);
 
@@ -29,7 +29,7 @@ namespace MessageQueueServer
 
             this.handler = new App();
 
-            Console.WriteLine("Servidor Iniciado Com Sucesso");
+            Console.WriteLine($"Servidor Iniciado Com Sucesso no endpoint {localAddr}:{port}");
         }
 
         public void Start()
@@ -53,8 +53,8 @@ namespace MessageQueueServer
                
                 
 
-                string? response = reader.ReadLine();
-                if (response != null) data = response;
+                string? msg = reader.ReadLine();
+                if (msg != null) data = msg;
 
                 string answer;
                 try

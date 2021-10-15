@@ -38,7 +38,9 @@ namespace MessageQueueClientLib
             // Buffer for reading data
             Byte[] bytes = new Byte[4096];
             String data = "";
-
+            
+            this.tcpListener.Start();
+            
             while (true)
             {
 
@@ -49,26 +51,24 @@ namespace MessageQueueClientLib
                 NetworkStream stream = client.GetStream();
                 
                 using var reader = new StreamReader(stream, Encoding.UTF8);
+                using var writer = new StreamWriter(stream, Encoding.UTF8);
 
-                string? response = reader.ReadLine();
-                if (response != null) data = response;
+                string? msg = reader.ReadLine();
+                if (msg != null) data = msg;
 
-                byte[] answer;
+                string answer;
                 try
                 {
                     handler(data);
-                    answer = Encoding.UTF8.GetBytes($"OK::");
+                    answer = "OK";
                 }
                 catch (Exception ex)
                 {
-                    answer = Encoding.UTF8.GetBytes($"ERROR::{ex.Message}");
+                    answer = $"ERROR::{ex.Message}";
                 }
 
+                writer.WriteLine(answer);
 
-                stream.Write(answer, 0, answer.Length);
-
-
-                tcpListener.Start();
             }
         }
 

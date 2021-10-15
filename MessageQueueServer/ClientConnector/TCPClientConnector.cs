@@ -10,7 +10,7 @@ namespace MessageQueueServer.ClientConnector
     internal class TCPClientConnector : IClientConnector
     {
 
-        private int ReadTimeout = 2000;
+        private int ReadTimeout = 200000;
 
         public ClientProcess ClientDescriptor { get ; init ; }
 
@@ -79,9 +79,11 @@ namespace MessageQueueServer.ClientConnector
                using var writer = new StreamWriter(networkStream, Encoding.UTF8);
                using var reader = new StreamReader(networkStream, Encoding.UTF8);
 
-                await writer.WriteLineAsync(msg.Content);
+                writer.AutoFlush = true;
 
-                string? response = reader.ReadToEnd();
+                writer.WriteLine(msg.Content);
+
+                string? response = reader.ReadLine();
 
                 if(response != null && response == "OK")
                 {

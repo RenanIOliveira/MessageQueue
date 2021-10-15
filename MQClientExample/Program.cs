@@ -12,9 +12,22 @@ namespace MQClientExample
 
         public static void Main(string[] args)
         {
-            Console.WriteLine("Iniciando Cliente...");
+            Console.WriteLine("Digite o ip");
+            var Ip = Console.ReadLine();
+            Console.WriteLine("Digite a porta");
+            var Port = Console.ReadLine();
 
-            var client = new MQClient((value) => Console.WriteLine(value),"127.0.0.1");
+            Console.WriteLine("Digite o ip do servidor");
+            var ServerIp = Console.ReadLine();
+
+            if (Port == null) Port = "13000";
+            if (Ip == null) Ip = "127.0.0.1";
+            if (ServerIp == null) ServerIp = "127.0.0.1";
+
+
+
+            Console.WriteLine("Iniciando Cliente...");
+            var client = new MQClient((value) => Console.WriteLine(value),Ip,ServerIp,Int32.Parse(Port));
 
             Console.WriteLine("Registrado Com Sucesso");
             
@@ -120,7 +133,22 @@ namespace MQClientExample
 
         static void SubscribeCommand(MQClient client)
         {
+            Console.WriteLine("Digite o Id da Fila:");
+            var Id = Console.ReadLine();
 
+            if(Id != null)
+            {
+                var success = client.Subscribe(Id);
+
+                if (success == true)
+                {
+                    Console.WriteLine("Subscrito Com Sucesso");
+                }
+                else
+                {
+                    Console.WriteLine("Erro ao Subscrever");
+                }
+            }
         }
     }
 }

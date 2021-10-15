@@ -6,8 +6,8 @@ namespace MessageQueueClientLib
     public class MQClient
     {
         ServerModel Server;
-        IServerConnector Connector; 
-        Guid ClientId ;
+        IServerConnector Connector;
+        public Guid ClientId {get; private set;}
         TcpServer Listener;
 
         enum QueueTypes
@@ -17,16 +17,17 @@ namespace MessageQueueClientLib
         }
 
         
-        public MQClient(Action<string> handler, string  server, int serverPort = 13000)
+        public MQClient(Action<string> handler,string clientIp, string  server, int clientPort, int serverPort = 13000)
         {
             this.Server = new ServerModel(server, serverPort);
             this.Connector = new TCPServerConnector(Server);
 
-            this.Listener = new TcpServer("127.0.0.1", 13000, handler);
+            this.Listener = new TcpServer(clientIp, clientPort, handler);
+            Task.Run(() => this.Listener.Start());
 
             var registeredId = Register();
 
-            if (registeredId == null)
+            if (registeredId == null || registeredId == "")
             {
                 throw new Exception($"Error: It was not possible to register in Message Queue Server");
             }

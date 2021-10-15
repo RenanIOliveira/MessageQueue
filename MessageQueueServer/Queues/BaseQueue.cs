@@ -30,7 +30,7 @@ namespace MessageQueueServer
 
         public void Publish(Message message)
         {
-            Content.Append(message);
+            Content.Add(message);
             PendentReceivers[message.MessageId] = Subscribers
                 .Select(s => s.Id)
                 .Where(id => id != message.Sender)

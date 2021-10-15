@@ -33,23 +33,32 @@ namespace MessageQueueServer.Server
             {
                 case "CreateQueue":
                     {
+                        Console.WriteLine($"Criando Fila ID: \"{message.Args[0]}\" Tipo: \"{Enum.Parse(typeof(QueueTypes), message.Args[1])}\"...");
                         this.manager.CreateQueue(message.Args[0],(QueueTypes) Enum.Parse(typeof(QueueTypes),message.Args[1]));
+                        Console.WriteLine($"Fila criada com sucesso");
+
                         break;
                     }
                 case "Publish":
                     {
+                        Console.WriteLine($"Publicando mensagem...");
                         CreateMessageAndSendToManager(message);
+                        Console.WriteLine($"Mensagem publicada com sucesso");
+
                         break;
                     }
                 case "Subscribe":
                     {
-
+                        Console.WriteLine($"Subscrevendo cliente {message.SenderId} à Fila {message.Args[0]}...");
                         this.manager.SubscribeToQueue(message.SenderId, message.Args[0]);
+                        Console.WriteLine($"Subscrito com sucesso");
                         break;
                     }
                 case "Register":
                     {
+                        Console.WriteLine($"Registrando novo cliente com Endereço {message.Args[0]}:{message.Args[1]}");
                         return this.manager.RegisterClient(message.SenderId, message.Args[0], Int32.Parse(message.Args[1])).ToString();
+                        Console.WriteLine($"Registrado com sucesso");
                     }
                 default:
                     {
