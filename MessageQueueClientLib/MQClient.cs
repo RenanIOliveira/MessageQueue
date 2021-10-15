@@ -17,7 +17,7 @@ namespace MessageQueueClientLib
         }
 
         
-        public MQClient(Action<string> handler,string clientIp, string  server, int clientPort, int serverPort = 13000)
+        public MQClient(Action<string> handler,string clientIp, string  server, int clientPort,string? clientId,  int serverPort = 13000)
         {
             this.Server = new ServerModel(server, serverPort);
             this.Connector = new TCPServerConnector(Server);
@@ -25,7 +25,7 @@ namespace MessageQueueClientLib
             this.Listener = new TcpServer(clientIp, clientPort, handler);
             Task.Run(() => this.Listener.Start());
 
-            var registeredId = Register();
+            var registeredId = Register(clientId);
 
             if (registeredId == null || registeredId == "")
             {
@@ -93,19 +93,29 @@ namespace MessageQueueClientLib
         }
 
 
-        public string? Register()
+        public string? Register(string? clientId)
         {
+            Guid guid = new Guid();
+            if(clientId != null) guid = Guid.Parse(clientId);
+            
             var args = new List<string>();
 
             args.Add(this.Listener.endPoint.Address.ToString());
             args.Add(this.Listener.endPoint.Port.ToString());
 
-
-            NetworkMessage msg = new NetworkMessage("Register", ClientId, args);
+            NetworkMessage msg = new NetworkMessage("Register", guid, args);
 
             Task<(bool, string)> taskResult = Connector.SendMessage(msg);
 
-            var result = taskResult.Result;
+            (bool, string) result;
+            try
+            {
+                result = taskResult.Result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
 
             if(result.Item1 == true)
             {

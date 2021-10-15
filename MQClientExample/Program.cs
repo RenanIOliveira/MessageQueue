@@ -12,6 +12,8 @@ namespace MQClientExample
 
         public static void Main(string[] args)
         {
+            var nameMapper = new NameMapper();
+
             Console.WriteLine("Digite o ip");
             var Ip = Console.ReadLine();
             Console.WriteLine("Digite a porta");
@@ -20,6 +22,11 @@ namespace MQClientExample
             Console.WriteLine("Digite o ip do servidor");
             var ServerIp = Console.ReadLine();
 
+            Console.WriteLine("Digite um nome para esse processo");
+            var name = Console.ReadLine();
+
+            var clientId = nameMapper.getIdFromName(name);
+
             if (Port == null) Port = "13000";
             if (Ip == null) Ip = "127.0.0.1";
             if (ServerIp == null) ServerIp = "127.0.0.1";
@@ -27,7 +34,10 @@ namespace MQClientExample
 
 
             Console.WriteLine("Iniciando Cliente...");
-            var client = new MQClient((value) => Console.WriteLine(value),Ip,ServerIp,Int32.Parse(Port));
+            var client = new MQClient((value) => Console.WriteLine($"Mensagem Recebida: {value}"),Ip,ServerIp,Int32.Parse(Port),clientId);
+
+            if(name != null)
+                nameMapper.AddName(name, client.ClientId.ToString());
 
             Console.WriteLine("Registrado Com Sucesso");
             

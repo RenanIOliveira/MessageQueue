@@ -76,15 +76,6 @@ namespace MessageQueueServer
             if (clientDescriptor == null) throw new Exception($"Client with Id {clientId} not registered");
 
 
-            //check if a connector for this client already exists, if it doesn't create
-
-            if (!connectors.ContainsKey(clientDescriptor.Id))
-            {
-                var connector = new TCPClientConnector(clientDescriptor);
-                connectors.TryAdd(clientDescriptor.Id, connector);
-            }
-
-
             Queues.TryGetValue(QueueId, out var queue);
 
             if (queue == null) throw new Exception($"Queue with Id {QueueId} doesn't exist");
@@ -123,14 +114,25 @@ namespace MessageQueueServer
             ClientProcess clientDescriptor;
             
             if (clientId == Guid.Empty)
-                clientDescriptor = new ClientProcess(new IPEndPoint(IPAddress.Parse(ip), port));
+                clientDescriptor = new ClientProcess(new IPEndPoint(IPAddress.Parse(ip), port), new Guid());
             else
                 clientDescriptor = new ClientProcess(new IPEndPoint(IPAddress.Parse(ip), port), clientId);
 
             
             if (Clients.ContainsKey(clientDescriptor.Id))
                 this.Clients.Remove(clientDescriptor.Id);
+
+            var connector = new TCPClientConnector(clientDescriptor);
+
+
+            //check if a connector for this client already exists, if it doesn't create
+
+            if (connectors.ContainsKey(clientDescriptor.Id))
+            {
+                connectors.TryRemove(clientDescriptor.Id, out _);
+            }
             
+            connectors.TryAdd(clientDescriptor.Id, connector);
 
             this.Clients.Add(clientDescriptor.Id, clientDescriptor);
 

@@ -12,13 +12,13 @@ namespace MessageQueueServer
 
         public Guid Id { get; private set; }
 
-        public ClientProcess(IPEndPoint ipEndPoint, Guid? id =null)
+        public ClientProcess(IPEndPoint ipEndPoint, Guid id)
         {
             this.ConnectionEndPoint = ipEndPoint;
-            if (id == null)
+            if (id == Guid.Empty)
                 Id = Guid.NewGuid();
             else
-                Id = Id;
+                Id = id;
         }
     }
 }
